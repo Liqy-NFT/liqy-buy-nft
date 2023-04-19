@@ -13,6 +13,12 @@ dependencies:
   autoprefixer:
     specifier: 10.4.14
     version: 10.4.14(postcss@8.4.22)
+  flowbite:
+    specifier: ^1.6.5
+    version: 1.6.5
+  jotai:
+    specifier: ^2.0.4
+    version: 2.0.4(react@18.2.0)
   next:
     specifier: 13.3.0
     version: 13.3.0(react-dom@18.2.0)(react@18.2.0)
@@ -172,6 +178,10 @@ packages:
     dependencies:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.15.0
+    dev: false
+
+  /@popperjs/core@2.11.7:
+    resolution: {integrity: sha512-Cr4OjIkipTtcXKjAsm8agyleBuDHvxzeBoa1v543lbv1YaIwQjESsVcmjiWiPEbC1FIeHOG/Op9kdCmAmiS3Kw==}
     dev: false
 
   /@swc/helpers@0.4.14:
@@ -371,6 +381,13 @@ packages:
       to-regex-range: 5.0.1
     dev: false
 
+  /flowbite@1.6.5:
+    resolution: {integrity: sha512-eI4h3pIRI9d7grlYq14r0A01KUtw7189sPLLx/O2i7JyPEWpbleScfYuEc48XTeNjk1xxm/JHgZkD9kjyOWAlA==}
+    dependencies:
+      '@popperjs/core': 2.11.7
+      mini-svg-data-uri: 1.4.4
+    dev: false
+
   /fraction.js@4.2.0:
     resolution: {integrity: sha512-MhLuK+2gUcnZe8ZHlaaINnQLl0xRIGRfcGk2yl8xoQAfHrSsL3rYu6FCmBdkdbhc9EPlwyGHewaRsvwRMJtAlA==}
     dev: false
@@ -469,6 +486,18 @@ packages:
     hasBin: true
     dev: false
 
+  /jotai@2.0.4(react@18.2.0):
+    resolution: {integrity: sha512-XkR1Jtm4a2iKV/7fdB3rNHjJz8FkkDMVczqiAok7lt8W4F69l/ZQkPGWSEV+hJOJXRn27k6XYKOoKEQIwBuAMA==}
+    engines: {node: '>=12.20.0'}
+    peerDependencies:
+      react: '>=17.0.0'
+    peerDependenciesMeta:
+      react:
+        optional: true
+    dependencies:
+      react: 18.2.0
+    dev: false
+
   /js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
     dev: false
@@ -500,6 +529,11 @@ packages:
     dependencies:
       braces: 3.0.2
       picomatch: 2.3.1
+    dev: false
+
+  /mini-svg-data-uri@1.4.4:
+    resolution: {integrity: sha512-r9deDe9p5FJUPZAk3A59wGH7Ii9YrjjWw0jmw/liSbHl2CHiyXj6FcDXDu2K3TjVAXqiJdaw3xxwlZZr9E6nHg==}
+    hasBin: true
     dev: false
 
   /minimatch@3.1.2:

@@ -13,6 +13,8 @@
     "@types/react": "18.0.37",
     "@types/react-dom": "18.0.11",
     "autoprefixer": "10.4.14",
+    "flowbite": "^1.6.5",
+    "jotai": "^2.0.4",
     "next": "13.3.0",
     "postcss": "8.4.22",
     "react": "18.2.0",
