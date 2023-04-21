@@ -1,22 +1,35 @@
-import { onMetaWidgetAtom } from "@/state"
+import { onMetaAlready, onMetaWidgetAtom } from "@/state"
 import { useAtom } from "jotai"
 import { useEffect } from "react"
 
 export const useBuyToken = () => {
-    const [widget, setWidget] = useAtom(onMetaWidgetAtom)
+    const [loadings, setLoadings] = useAtom(onMetaAlready)
     let loading = false
     
-    const createWidget = (amount: string, token: string, chainId: number, orderId: string) => {
+    const createWidget = (amount: string, token: string, chainId: number, orderId: string, widget: any, setWidget: Function) => {
         let onMeta = (window as any).onMetaWidget
 
         if(!onMeta) return
         
+        if(loadings) {
+            let onmeta = (window as any).onmeta
+
+            onmeta.tokenAddress = token
+            onmeta.chainId = chainId
+            onmeta.fiatAmount = Number(amount) < 100 ? "100" : amount
+
+            onmeta.init()
+
+            console.log(onmeta)
+
+            return
+        }
+
         if(widget) {
             widget.tokenAddress = token
             widget.chainId = chainId
             widget.fiatAmount = Number(amount) < 100 ? "100" : amount
 
-            console.log(widget, "widget 1")
             widget.init()
         } else {
             if(!loading) {
@@ -35,7 +48,10 @@ export const useBuyToken = () => {
     
                 loading = true
     
-                setWidget(widget2)
+                setWidget(widget2);
+
+                (window as any).onmeta = widget2
+                setLoadings(true)
     
                 console.log(widget, "widget 2")
                 widget2.init()
@@ -45,14 +61,14 @@ export const useBuyToken = () => {
         console.log(widget, "widget")
     }
 
-    useEffect(() => {
-        if(widget) {
-            loading = false
-            widget.on("ALL_EVENTS", (status: any) => {
-                console.log("EVENT LOGGING => ", status)
-            })
-        }
-    }, [widget])
+    // useEffect(() => {
+    //     if(widget) {
+    //         loading = false
+    //         widget.on("ALL_EVENTS", (status: any) => {
+    //             console.log("EVENT LOGGING => ", status)
+    //         })
+    //     }
+    // }, [widget])
 
     return {
         createWidget

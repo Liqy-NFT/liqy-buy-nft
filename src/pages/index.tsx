@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { Onmeta } from '@/components/onmeta'
 import { useBuyToken } from '@/hooks/onmeta'
 import { useAtom } from 'jotai'
-import { onrampProviderAtom, Provider } from '@/state'
+import { BASE_URL, nftAtom, onrampProviderAtom, Provider, quoteAtom } from '@/state'
 import { OnrampProvider } from '@/components'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -14,10 +14,36 @@ export default function Home() {
   const [paying, setPaying] = useState(false)
   const [onrampProvider, setOnrampProvider] = useAtom(onrampProviderAtom)
 
+  const [quote, setQuote] = useAtom(quoteAtom)
+  const [nft, setNft] = useAtom(nftAtom)
+
+  const getQuote = async () => {
+    const res = await fetch(`${BASE_URL}/onramp`, {
+      method: "POST",
+      body: JSON.stringify({
+        tokenAddress: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        chainId: 137,
+        fiat: "inr",
+        tokenAmount: 100
+      }),
+      headers: {
+        'content-type': 'application/json'
+      }
+    })
+
+    const data = await res.json()
+
+    setQuote(data.data)
+
+    setOnrampProvider(data.data.onramp)
+  }
+
   useEffect(() => {
     const interval = setInterval(() => {
       setSecond(second => {
-        if(second === 30) return 0
+        if(second === 30) {
+          return 0
+        }
         else return second + 1
       })
     }, 1000)
@@ -25,10 +51,16 @@ export default function Home() {
     return () => clearInterval(interval)
   }, [])
 
-  const { createWidget } = useBuyToken()
+  useEffect(() => {
+    if(second == 0) {
+      getQuote()
+    }
+  }, [second])
 
   return (
     <main className="relative flex min-h-screen flex-col items-center justify-between lg:p-24">
+      Selected Onramp = {quote && <span>{quote.onramp}</span>}
+      
       {paying && 
         <OnrampProvider onrampProvider={onrampProvider} setPaying={setPaying} /> 
       }

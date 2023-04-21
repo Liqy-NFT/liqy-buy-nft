@@ -1,6 +1,9 @@
 lockfileVersion: '6.0'
 
 dependencies:
+  '@onramp.money/onramp-web-sdk':
+    specifier: ^1.3.9
+    version: 1.3.9
   '@types/node':
     specifier: 18.15.11
     version: 18.15.11
@@ -178,6 +181,10 @@ packages:
     dependencies:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.15.0
+    dev: false
+
+  /@onramp.money/onramp-web-sdk@1.3.9:
+    resolution: {integrity: sha512-DIuGKDP18YUTpzetHbKsGwbBGdZMVvWnHlMIy+oVcLszjc+vYGi417cJSWjto2CNLuAJT30njLFrNhXUV568Fw==}
     dev: false
 
   /@popperjs/core@2.11.7:

@@ -1,33 +1,56 @@
 import { useBuyToken } from "@/hooks/onmeta"
-import { Provider } from "@/state"
+import { onMetaWidgetAtom, Provider, quoteAtom } from "@/state"
+import { useAtom } from "jotai"
 import { Inter } from "next/font/google"
 import { useEffect, useState } from "react"
+import { OnrampWebSDK } from '@onramp.money/onramp-web-sdk';
+import { useAlpyne } from "@/hooks/alpyne"
 
 const inter = Inter({ subsets: ['latin'] })
 
 export const OnrampProvider = ({ onrampProvider, setPaying }: { onrampProvider: Provider, setPaying: any }) => {
     const { createWidget } = useBuyToken()
+    const { generateURL } = useAlpyne()
     const [hidden, setHidden] = useState(true)
+    const [widget, setWidget] = useAtom(onMetaWidgetAtom)
+    const [alpyneURL, setAlpyneURL] = useState("https://poc.alpyne.tech/app/v1/landing")
 
-    const loadWidget = () => {
+    const [quote] = useAtom(quoteAtom)
+
+    const loadWidget = async () => {
+        if(!quote) return
+
         switch (onrampProvider) {
             case Provider.ONMETA:
-                createWidget("1000", "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", 137, "")
+                createWidget(quote.price, "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", 137, "", widget, setWidget)
                 break;
             case Provider.ALPYNE:
+                const url = await generateURL("0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "inr", 137, quote.price, "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee")
+
+                setAlpyneURL(url)
                 break;
             case Provider.ONRAMP:
+                const onrampInstance = new OnrampWebSDK({  
+                    appId: 1,
+                    fiatAmount: quote.price,
+                    walletAddress: '0x495f519017eF0368e82Af52b4B64461542a5430B',
+                    flowType: 1
+                });
+
+                onrampInstance.show()
                 break;
             case Provider.TRANSAK:
                 break;
         }
     }
 
-    useEffect(() => loadWidget(), [])
+    useEffect(() => {
+        loadWidget()
+    }, [quote])
 
     return (
         <div className="z-50 absolute top-0 left-0 bg-white w-full h-full justify-center items-center">
-            <div className="w-full h-10 p-4 flex justify-center items-center">
+            <div className="z-50 w-full h-10 p-4 flex justify-center items-center">
                 <h1 className="text-xl font-bold w-full h-full" style={inter.style}>Liqy</h1>
                 <div className="w-full h-full flex justify-end">
                     <button onClick={() => setHidden(hidden => !hidden)} type="button" data-drawer-target="drawer-bottom-example" data-drawer-show="drawer-bottom-example" data-drawer-placement="bottom" aria-controls="drawer-bottom-example">
@@ -41,8 +64,13 @@ export const OnrampProvider = ({ onrampProvider, setPaying }: { onrampProvider: 
             </div>
             <div className='w-full h-full justify-center items-center'>
                 {onrampProvider === Provider.ONMETA && <div className="w-full h-full z-50 flex justify-center items-center" id='widget'></div>}
-                {onrampProvider === Provider.ONRAMP && <div className='widget'></div>}
-                {onrampProvider === Provider.ALPYNE && <div className='widget'></div>}
+                {onrampProvider === Provider.ALPYNE && 
+                    <div className="w-full h-full ">
+                        <iframe src={alpyneURL}
+                            width="100%"
+                            height="99%" />
+                    </div>
+                }
                 {onrampProvider === Provider.TRANSAK && <div className='widget'></div>}
             </div>
             <div id="drawer-bottom-example" className={(hidden ? "hidden" : "") + " fixed bottom-0 left-0 right-0 z-40 w-full p-4 overflow-y-auto transition-transform bg-white dark:bg-gray-800 transform-none"} tabIndex={-1} aria-labelledby="drawer-bottom-label">
