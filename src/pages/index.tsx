@@ -6,6 +6,7 @@ import { useBuyToken } from '@/hooks/onmeta'
 import { useAtom } from 'jotai'
 import { BASE_URL, nftAtom, onrampProviderAtom, Provider, quoteAtom } from '@/state'
 import { OnrampProvider } from '@/components'
+import { useRouter } from 'next/router'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -17,14 +18,64 @@ export default function Home() {
   const [quote, setQuote] = useAtom(quoteAtom)
   const [nft, setNft] = useAtom(nftAtom)
 
+  const { query } = useRouter()
+
+  useEffect(() => {
+    if(!query.address) {
+
+    }
+
+    if(!query.id) {
+
+    }
+
+    if(!query.fiat) {
+      
+    }
+    
+    if(!query.chain) {
+      
+    }
+    
+    if(!query.tokenAmount) {
+      
+    }
+
+    if(!query.token) {
+      
+    }
+    
+    if(!query.nft) {
+      
+    }
+
+    const nft = {
+      address: query.address,
+      id: query.id,
+      fiat: query.fiat,
+      chainId: query.chain,
+      tokenAmount: query.tokenAmount,
+      token: query.token,
+      image: query.nft,
+      name: query.name,
+      collection: query.collection
+    }
+
+    setNft(nft)
+  }, [query])
+
   const getQuote = async () => {
+    if(!nft || !nft.token) return
+
+    console.log(nft)
+
     const res = await fetch(`${BASE_URL}/onramp`, {
       method: "POST",
       body: JSON.stringify({
-        tokenAddress: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
-        chainId: 137,
-        fiat: "inr",
-        tokenAmount: 100
+        tokenAddress: nft.token,
+        chainId: Number(nft.chainId),
+        fiat: nft.fiat,
+        tokenAmount: nft.tokenAmount
       }),
       headers: {
         'content-type': 'application/json'
@@ -52,10 +103,10 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
-    if(second == 0) {
+    if(second == 0 || !quote) {
       getQuote()
     }
-  }, [second])
+  }, [second, nft])
 
   return (
     <main className="relative flex min-h-screen flex-col items-center justify-between lg:p-24">
@@ -68,12 +119,12 @@ export default function Home() {
         <div className='w-full flex flex-col lg:flex-row justify-center items-center'>
           <div className='w-full h-full flex justify-center items-center lg:block'>
             <div className='h-40 w-40 bg-gray-200 dark:bg-gray-700 rounded-xl bg-[#3E3E3E]'>
-              <img className='rounded-xl' src="https://assets.raribleuserdata.com/prod/v1/image/t_image_big/aHR0cHM6Ly9pcGZzLmlvL2lwZnMvUW1Ya0MyelRORVFWdllQYkFleUtWcEZaUnZVU3IzSG9URHNwY29nazZWOGNxTQ==" alt="" />
+              <img className='rounded-xl' src={nft && nft.image} alt="" />
             </div>
           </div>
           <div className='w-full h-full flex flex-col justify-center items-center lg:items-start mt-5 lg:mt-0 space-y-2 lg:space-y-4'>
-            <h1 style={inter.style} className='text-xl font-bold'>BoredApeYachtClub #1392</h1>
-            <h1 style={inter.style} className='text-md font-semibold'>Bored Ape Yacht Club</h1>
+            <h1 style={inter.style} className='text-xl font-bold'>{nft && nft.name}</h1>
+            <h1 style={inter.style} className='text-md font-semibold'>{nft && nft.collection}</h1>
           </div>
         </div>
 
@@ -102,18 +153,16 @@ export default function Home() {
             <div className={inter.className + ' w-full flex justify-center items-center text-white'}>
               <div className='w-full h-full bg-[#3E3E3E] rounded-xl flex justify-center items-center divide-x-2'>
                 <div className='w-full h-full flex flex-col justify-center items-start p-3 space-y-3'>
-                  <h1 className='font-bold text-2xl h-16 flex justify-center items-center'>You Pay ₹620</h1>
+                  <h1 className='font-bold text-2xl h-16 flex justify-center items-center'>You Pay ₹{quote && quote.price + quote.breakdown.liqyPercentage}</h1>
                   <h1>Price</h1>
                   <h1>Liqy Fee</h1>
-                  <h1>Network fee</h1>
                   <h1 className='pt-2 border-t-2 w-full'>Total fee</h1>
                 </div>
                 <div className='w-full h-full flex flex-col justify-center items-start p-3 space-y-3'>
                   <h1 className='text-gray-400 font-bold text-xl h-16 flex justify-center items-center'>View breakup</h1>
-                  <h1>₹200</h1>
-                  <h1>₹400</h1>
-                  <h1>₹20</h1>
-                  <h1 className='pt-2 border-t-2 w-full'>₹620</h1>
+                  <h1>₹{quote && quote.price}</h1>
+                  <h1>₹{quote && quote.breakdown.liqyPercentage}</h1>
+                  <h1 className='pt-2 border-t-2 w-full'>₹{quote && quote.price + quote.breakdown.liqyPercentage}</h1>
                 </div>
               </div>
             </div>

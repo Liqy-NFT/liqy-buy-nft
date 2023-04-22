@@ -10,7 +10,7 @@ export enum Provider {
     TRANSAK = "TRANSAK"
 }
 
-export const onrampProviderAtom = atom<Provider>(Provider.ALPYNE)
+export const onrampProviderAtom = atom<Provider>(Provider.ONRAMP)
 
 export const BASE_URL = "http://localhost:5000/v1";
 
