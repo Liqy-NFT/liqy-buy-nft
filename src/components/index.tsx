@@ -1,5 +1,5 @@
 import { useBuyToken } from "@/hooks/onmeta"
-import { onMetaWidgetAtom, Provider, quoteAtom } from "@/state"
+import { onMetaWidgetAtom, onrampURL, Provider, quoteAtom } from "@/state"
 import { useAtom } from "jotai"
 import { Inter } from "next/font/google"
 import { useEffect, useState } from "react"
@@ -8,46 +8,25 @@ import { useAlpyne } from "@/hooks/alpyne"
 
 const inter = Inter({ subsets: ['latin'] })
 
-export const OnrampProvider = ({ onrampProvider, setPaying }: { onrampProvider: Provider, setPaying: any }) => {
+export const OnrampProvider = ({ setPaying }: { setPaying: any }) => {
     const { createWidget } = useBuyToken()
     const { generateURL } = useAlpyne()
     const [hidden, setHidden] = useState(true)
     const [widget, setWidget] = useAtom(onMetaWidgetAtom)
-    const [alpyneURL, setAlpyneURL] = useState("https://poc.alpyne.tech/app/v1/landing")
+    const [url, setURL] = useAtom(onrampURL)
 
     const [quote] = useAtom(quoteAtom)
 
-    const loadWidget = async () => {
-        if(!quote) return
+    // const loadWidget = async () => {
+    //     if(!quote) return
 
-        switch (onrampProvider) {
-            case Provider.ONMETA:
-                createWidget(quote.price, "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", 137, "", widget, setWidget)
-                break;
-            case Provider.ALPYNE:
-                const url = await generateURL("0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "inr", 137, quote.price, "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee")
+        
+    //     setURL()
+    // }
 
-                setAlpyneURL(url)
-                break;
-            case Provider.ONRAMP:
-                const onrampInstance = new OnrampWebSDK({  
-                    appId: 1,
-                    // fiatAmount: quote.price,
-                    coinAmount: 100,
-                    walletAddress: '0x495f519017eF0368e82Af52b4B64461542a5430B',
-                    flowType: 1
-                });
-
-                onrampInstance.show()
-                break;
-            case Provider.TRANSAK:
-                break;
-        }
-    }
-
-    useEffect(() => {
-        loadWidget()
-    }, [quote])
+    // useEffect(() => {
+    //     loadWidget()
+    // }, [quote])
 
     return (
         <div className="z-50 absolute top-0 left-0 bg-white w-full h-full justify-center items-center">
@@ -64,15 +43,14 @@ export const OnrampProvider = ({ onrampProvider, setPaying }: { onrampProvider: 
                 </div>
             </div>
             <div className='w-full h-full justify-center items-center'>
-                {onrampProvider === Provider.ONMETA && <div className="w-full h-full z-50 flex justify-center items-center" id='widget'></div>}
-                {onrampProvider === Provider.ALPYNE && 
+                {url && 
                     <div className="w-full h-full ">
-                        <iframe src={alpyneURL}
+                        <iframe src={url}
+                            height="630px"
                             width="100%"
-                            height="99%" />
+                        />
                     </div>
                 }
-                {onrampProvider === Provider.TRANSAK && <div className='widget'></div>}
             </div>
             <div id="drawer-bottom-example" className={(hidden ? "hidden" : "") + " fixed bottom-0 left-0 right-0 z-40 w-full p-4 overflow-y-auto transition-transform bg-white dark:bg-gray-800 transform-none"} tabIndex={-1} aria-labelledby="drawer-bottom-label">
                 <h5 id="drawer-bottom-label" className="inline-flex items-center mb-4 text-base font-semibold text-gray-500 dark:text-gray-400"><svg className="w-5 h-5 mr-2" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>Bottom drawer</h5>

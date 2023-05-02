@@ -7,10 +7,16 @@ import { useAtom } from 'jotai'
 import { BASE_URL, nftAtom, onrampProviderAtom, Provider, quoteAtom } from '@/state'
 import { OnrampProvider } from '@/components'
 import { useRouter } from 'next/router'
+import { useBuyNFT } from '@/hooks/use-buy-token'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
+  const {
+    getQuote,
+    createIntent
+  } = useBuyNFT()
+
   const [second, setSecond] = useState(0)
   const [paying, setPaying] = useState(false)
   const [onrampProvider, setOnrampProvider] = useAtom(onrampProviderAtom)
@@ -64,31 +70,6 @@ export default function Home() {
     setNft(nft)
   }, [query])
 
-  const getQuote = async () => {
-    if(!nft || !nft.token) return
-
-    console.log(nft)
-
-    const res = await fetch(`${BASE_URL}/onramp`, {
-      method: "POST",
-      body: JSON.stringify({
-        tokenAddress: nft.token,
-        chainId: Number(nft.chainId),
-        fiat: nft.fiat,
-        tokenAmount: nft.tokenAmount
-      }),
-      headers: {
-        'content-type': 'application/json'
-      }
-    })
-
-    const data = await res.json()
-
-    setQuote(data.data)
-
-    setOnrampProvider(data.data.onramp)
-  }
-
   useEffect(() => {
     const interval = setInterval(() => {
       setSecond(second => {
@@ -108,12 +89,17 @@ export default function Home() {
     }
   }, [second, nft])
 
+  const create = async () => {
+    await createIntent();
+    setPaying(true)
+  }
+
   return (
     <main className="relative flex min-h-screen flex-col items-center justify-between lg:p-24">
       Selected Onramp = {quote && <span>{quote.onramp}</span>}
       
       {paying && 
-        <OnrampProvider onrampProvider={onrampProvider} setPaying={setPaying} /> 
+        <OnrampProvider setPaying={setPaying} /> 
       }
       <div className='w-full h-full lg:max-h-[85vh] lg:w-[90vw] lg:max-w-[450px] bg-white p-5 rounded-xl flex flex-col justify-center items-center space-y-4'>
         <div className='w-full flex flex-col lg:flex-row justify-center items-center'>
@@ -173,7 +159,7 @@ export default function Home() {
           <button style={inter.style} className={" w-full bg-gray-500 text-white hover:bg-black/40 focus:shadow-black/30 inline-flex h-[35px] items-center justify-center rounded-xl w-1/2 py-5 font-medium leading-none focus:shadow-[0_0_0_2px] focus:outline-none"}>
             Cancel
           </button>
-          <button style={inter.style} onClick={() => setPaying(true)} className={" w-full bg-black text-white hover:bg-black/40 focus:shadow-black/30 inline-flex h-[35px] items-center justify-center rounded-xl w-1/2 py-5 font-medium leading-none focus:shadow-[0_0_0_2px] focus:outline-none"}>
+          <button style={inter.style} onClick={() => create()} className={" w-full bg-black text-white hover:bg-black/40 focus:shadow-black/30 inline-flex h-[35px] items-center justify-center rounded-xl w-1/2 py-5 font-medium leading-none focus:shadow-[0_0_0_2px] focus:outline-none"}>
             Buy NFT
           </button>
         </div>
