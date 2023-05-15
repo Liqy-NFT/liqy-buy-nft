@@ -12,7 +12,7 @@ export enum Provider {
 
 export const onrampProviderAtom = atom<Provider>(Provider.ONRAMP)
 
-export const BASE_URL = "http://localhost:5000/v1";
+export const BASE_URL = "http://localhost:5001/v1";
 
 export const onrampURL = atom<string>("")
 export const nftAtom = atom<any>(undefined)

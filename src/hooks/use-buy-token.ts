@@ -8,7 +8,7 @@ export const useBuyNFT = () => {
     const [onramp, setOnramp] = useAtom(onrampURL)
 
     const headers = {
-        'secret-key': "b4df3749-64d7-496b-a41f-3ec1e14124f7"
+        'secret-key': "04bf6238-f491-4d04-bccc-c3b7dcc9e2be"
     }
 
     const getQuote = async () => {

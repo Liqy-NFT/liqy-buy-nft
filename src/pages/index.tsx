@@ -109,14 +109,14 @@ export default function Home() {
             </div>
           </div>
           <div className='w-full h-full flex flex-col justify-center items-center lg:items-start mt-5 lg:mt-0 space-y-2 lg:space-y-4'>
-            <h1 style={inter.style} className='text-xl font-bold'>{nft && nft.name}</h1>
-            <h1 style={inter.style} className='text-md font-semibold'>{nft && nft.collection}</h1>
+            <h1 style={inter.style} className='text-xl font-bold text-black'>{nft && nft.name}</h1>
+            <h1 style={inter.style} className='text-md font-semibold text-black'>{nft && nft.collection}</h1>
           </div>
         </div>
 
         <div className='relative w-full h-full'>
           <div className='z-50 flex justify-end items-center space-x-2'>
-            <p className={inter.className}>Retrying in {second}s</p>
+            <p className={inter.className + ' text-black'}>Retrying in {second}s</p>
             <svg
               className="animate-spin -ml-1 mr-3 h-5 w-5 text-black"
               xmlns="http://www.w3.org/2000/svg"
